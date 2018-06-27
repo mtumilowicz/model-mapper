@@ -1,5 +1,7 @@
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
+import org.modelmapper.TypeMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -69,6 +71,38 @@ class PersonToPersonDto {
                         .build(),
                 PersonDto.class);
 
+        assertEquals("michal@gmail.com", personDto.getContact().getEmail());
+        assertEquals("123", personDto.getContact().getPhone());
+    }
+
+    @Test
+    void map4() {
+        ModelMapper modelMapper = new ModelMapper();
+
+        TypeMap<Person, PersonDto> typeMap = modelMapper.createTypeMap(Person.class, PersonDto.class);
+
+        typeMap.addMapping(Person::getName, PersonDto::setFirstName);
+        
+        typeMap.addMappings(
+                new PropertyMap<Person, PersonDto>() {
+                    @Override
+                    protected void configure() {
+                        using(ctx -> new Contact(
+                                ((Person) ctx.getSource()).getEmail(),
+                                ((Person) ctx.getSource()).getPhone())
+                        ).map(source, destination.getContact());
+                    }
+                });
+
+
+        PersonDto personDto = modelMapper.map(Person.builder()
+                .name("Michal")
+                        .email("michal@gmail.com")
+                        .phone("123")
+                        .build(),
+                PersonDto.class);
+
+        assertEquals("Michal", personDto.getFirstName());
         assertEquals("michal@gmail.com", personDto.getContact().getEmail());
         assertEquals("123", personDto.getContact().getPhone());
     }
