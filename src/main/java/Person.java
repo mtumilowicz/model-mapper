@@ -15,4 +15,6 @@ class Person {
     String name;
     int age;
     Address address;
+    String email;
+    String phone;
 }

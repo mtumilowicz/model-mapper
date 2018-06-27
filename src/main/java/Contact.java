@@ -1,5 +1,7 @@
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 /**
@@ -7,10 +9,9 @@ import lombok.experimental.FieldDefaults;
  */
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Data
-class PersonDto {
-    String firstName;
-    int age;
-    String city;
-    String street;
-    Contact contact;
+@AllArgsConstructor
+@NoArgsConstructor
+class Contact {
+    String email;
+    String phone;
 }
