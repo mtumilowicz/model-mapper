@@ -74,3 +74,68 @@ If the ambiguity cannot be resolved, a
 `ConfigurationException` is thrown.
 
 # manual
+Assume that we have two classes `Person` and `PersonDTO` and relations:
+* exact 1 - 1 matching between fields
+    ```
+    TypeMap<Person, PersonDto> personToDto = new ModelMapper().createTypeMap(Person.class, PersonDto.class);
+    
+    Person person = ...
+    
+    PersonDto personDto = personToDto.map(person);    
+    ```
+    
+* some fields differs at names (for example `name -> firstName`
+    ```
+    TypeMap<Person, PersonDto> personToDto = new ModelMapper().createTypeMap(Person.class, PersonDto.class)
+            .addMapping(Person::getName, PersonDto::setFirstName);
+    
+    Person person = ...
+    
+    PersonDto personDto = personToDto.map(person);
+    ```
+    
+* mapping object's fields that belong to `Person` (for example 
+`person.address.street`) directly to dto fields 
+(`address.street -> street`)
+    ```
+    TypeMap<Person, PersonDto> personToDto = new ModelMapper().createTypeMap(Person.class, PersonDto.class)
+            .addMapping(x -> x.getAddress().getCity(), PersonDto::setCity)
+            .addMapping(x -> x.getAddress().getStreet(), PersonDto::setStreet);
+    
+    
+    PersonDto personDto = personToDto.map(person);
+    ```
+    
+    Note that this approach is null safe - if `person.address` 
+    mapping will not occur.
+    
+* mapping fields of `Person` to object's fields of dto (`email -> contact.email`)
+    * `Contact` has no-arg constructor
+        ```
+        TypeMap<Person, PersonDto> typeMap = new ModelMapper().createTypeMap(Person.class, PersonDto.class)
+                .<String>addMapping(Person::getEmail, (x, y) -> x.getContact().setEmail(y))
+                .<String>addMapping(Person::getPhone, (x, y) -> x.getContact().setPhone(y));
+        
+        
+        PersonDto personDto = typeMap.map(person);
+        ```
+    
+    * `Contact` does not have no-arg constructor
+        ```
+        TypeMap<Person, PersonDto> typeMap = new ModelMapper().createTypeMap(Person.class, PersonDto.class);
+        typeMap.addMappings(
+                new PropertyMap<Person, PersonDto>() {
+                    @Override
+                    protected void configure() {
+                        using(ctx -> new Contact(
+                                ((Person) ctx.getSource()).getEmail(),
+                                ((Person) ctx.getSource()).getPhone())
+                        ).map(source, destination.getContact());
+                    }
+                });
+        
+        
+        PersonDto personDto = typeMap.map(person);
+        ```
+# test cases
+All above features are tested in `PersonToPersonDto`.
