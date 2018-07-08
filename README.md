@@ -40,11 +40,11 @@ What is more - users can create custom conventions.
 
 # defaults
 * **Access level**: public - eligible for matching are only public 
-methods and fields
-* **Field matching**: disabled - only methods are eligible for matching
-* **Naming convention**: JavaBeans
-* **Name transformer**: JavaBeans
-* **Name tokenizer**: Camel Case
+methods and fields.
+* **Field matching**: disabled - only methods are eligible for matching.
+* **Naming convention**: JavaBeans.
+* **Name transformer**: JavaBeans.
+* **Name tokenizer**: Camel Case.
 * **Matching strategy**: Standard, which means that:
     * all destination properties be matched and 
     all source property names have at least one token matched,
@@ -55,12 +55,12 @@ methods and fields
 non-void return type are eligible, and destination methods with one 
 parameter and a void return type are eligible.
 
-* **Transformation** - a source object with a `getPerson` method and a 
-destination object with a `setPerson` method. In order for these to be 
-matched, a `NameTransformer` is used to transform the method names to 
-`person`.
+* **Transformation** - if you have a source object with a 
+`getPerson` method and a destination object with a `setPerson` method, 
+in order for these to be matched, a `NameTransformer` is used to 
+transform the method names to `person`.
 
-* **Tokenization** - After transformation, NameTokenizers are used to 
+* **Tokenization** - After transformation, `NameTokenizers` are used to 
 tokenize class and property names for matching.
 
 * **Matching** - match is based on properties' names and class 
@@ -74,7 +74,7 @@ If the ambiguity cannot be resolved, a
 `ConfigurationException` is thrown.
 
 # manual
-Assume that we have two classes `Person` and `PersonDTO` and relations:
+Assume that we have two classes `Person` and `PersonDto` and relations:
 * exact 1 - 1 matching between fields
     ```
     TypeMap<Person, PersonDto> personToDto = new ModelMapper().createTypeMap(Person.class, PersonDto.class);
@@ -84,7 +84,7 @@ Assume that we have two classes `Person` and `PersonDTO` and relations:
     PersonDto personDto = personToDto.map(person);    
     ```
     
-* some fields differs at names (for example `name -> firstName`
+* some fields differs at names (`name -> firstName`)
     ```
     TypeMap<Person, PersonDto> personToDto = new ModelMapper().createTypeMap(Person.class, PersonDto.class)
             .addMapping(Person::getName, PersonDto::setFirstName);
@@ -101,28 +101,30 @@ Assume that we have two classes `Person` and `PersonDTO` and relations:
             .addMapping(x -> x.getAddress().getCity(), PersonDto::setCity)
             .addMapping(x -> x.getAddress().getStreet(), PersonDto::setStreet);
     
+    Person person = ...
     
     PersonDto personDto = personToDto.map(person);
     ```
     
-    Note that this approach is null safe - if `person.address` 
+    Note that this approach is null safe - if `person.address` is null 
     mapping will not occur.
     
 * mapping fields of `Person` to `PersonDto` property's fields (`email -> contact.email`)
     * `Contact` has no-arg constructor
         ```
-        TypeMap<Person, PersonDto> typeMap = new ModelMapper().createTypeMap(Person.class, PersonDto.class)
+        TypeMap<Person, PersonDto> personToDto = new ModelMapper().createTypeMap(Person.class, PersonDto.class)
                 .<String>addMapping(Person::getEmail, (x, y) -> x.getContact().setEmail(y))
                 .<String>addMapping(Person::getPhone, (x, y) -> x.getContact().setPhone(y));
         
+        Person person = ...
         
-        PersonDto personDto = typeMap.map(person);
+        PersonDto personDto = personToDto.map(person);
         ```
     
     * `Contact` does not have no-arg constructor
         ```
-        TypeMap<Person, PersonDto> typeMap = new ModelMapper().createTypeMap(Person.class, PersonDto.class);
-        typeMap.addMappings(
+        TypeMap<Person, PersonDto> personToDto = new ModelMapper().createTypeMap(Person.class, PersonDto.class);
+        personToDto.addMappings(
                 new PropertyMap<Person, PersonDto>() {
                     @Override
                     protected void configure() {
@@ -133,8 +135,9 @@ Assume that we have two classes `Person` and `PersonDTO` and relations:
                     }
                 });
         
+        Person person = ...
         
-        PersonDto personDto = typeMap.map(person);
+        PersonDto personDto = personToDto.map(person);
         ```
 # test cases
 All above features are tested in `PersonToPersonDto`.
