@@ -94,8 +94,7 @@ Assume that we have two classes `Person` and `PersonDTO` and relations:
     PersonDto personDto = personToDto.map(person);
     ```
     
-* mapping object's fields that belong to `Person` (for example 
-`person.address.street`) directly to dto fields 
+* mapping `Person` property's fields to dto fields 
 (`address.street -> street`)
     ```
     TypeMap<Person, PersonDto> personToDto = new ModelMapper().createTypeMap(Person.class, PersonDto.class)
@@ -109,7 +108,7 @@ Assume that we have two classes `Person` and `PersonDTO` and relations:
     Note that this approach is null safe - if `person.address` 
     mapping will not occur.
     
-* mapping fields of `Person` to object's fields of dto (`email -> contact.email`)
+* mapping fields of `Person` to `PersonDto` property's fields (`email -> contact.email`)
     * `Contact` has no-arg constructor
         ```
         TypeMap<Person, PersonDto> typeMap = new ModelMapper().createTypeMap(Person.class, PersonDto.class)
