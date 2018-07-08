@@ -55,12 +55,12 @@ class PersonToPersonDto {
 
     @Test
     void sourceFieldsToDtoPropertyFields_defaultConstructor() {
-        TypeMap<Person, PersonDto> typeMap = new ModelMapper().createTypeMap(Person.class, PersonDto.class)
+        TypeMap<Person, PersonDto> personToDto = new ModelMapper().createTypeMap(Person.class, PersonDto.class)
                 .<String>addMapping(Person::getEmail, (x, y) -> x.getContact().setEmail(y))
                 .<String>addMapping(Person::getPhone, (x, y) -> x.getContact().setPhone(y));
 
 
-        PersonDto personDto = typeMap.map(Person.builder()
+        PersonDto personDto = personToDto.map(Person.builder()
                         .email("michal@gmail.com")
                         .phone("123")
                         .build());
@@ -71,11 +71,11 @@ class PersonToPersonDto {
 
     @Test
     void sourceFieldsToDtoPropertyFields_withoutDefaultConstructor() {
-        TypeMap<Person, PersonDto> typeMap = new ModelMapper().createTypeMap(Person.class, PersonDto.class);
+        TypeMap<Person, PersonDto> personToDto = new ModelMapper().createTypeMap(Person.class, PersonDto.class);
 
-        typeMap.addMapping(Person::getName, PersonDto::setFirstName);
-        
-        typeMap.addMappings(
+        personToDto.addMapping(Person::getName, PersonDto::setFirstName);
+
+        personToDto.addMappings(
                 new PropertyMap<Person, PersonDto>() {
                     @Override
                     protected void configure() {
@@ -87,7 +87,7 @@ class PersonToPersonDto {
                 });
 
 
-        PersonDto personDto = typeMap.map(Person.builder()
+        PersonDto personDto = personToDto.map(Person.builder()
                 .name("Michal")
                         .email("michal@gmail.com")
                         .phone("123")
