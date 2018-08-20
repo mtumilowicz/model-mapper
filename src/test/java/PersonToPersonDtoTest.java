@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 /**
  * Created by mtumilowicz on 2018-06-27.
  */
-class PersonToPersonDto {
+class PersonToPersonDtoTest {
     @Test
     void sourcePropertyFieldsToDtoFields() {
         TypeMap<Person, PersonDto> personToDto = new ModelMapper().createTypeMap(Person.class, PersonDto.class)
