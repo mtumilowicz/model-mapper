@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/mtumilowicz/model-mapper.svg?branch=master)](https://travis-ci.com/mtumilowicz/model-mapper)
+
 # model-mapper
 The main goal of this project is to explore basic features of
 `ModelMapper`.
