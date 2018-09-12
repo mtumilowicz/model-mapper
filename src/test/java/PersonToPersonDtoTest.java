@@ -1,7 +1,11 @@
 import org.junit.jupiter.api.Test;
+import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.modelmapper.TypeMap;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -96,5 +100,22 @@ class PersonToPersonDtoTest {
         assertEquals("Michal", personDto.getFirstName());
         assertEquals("michal@gmail.com", personDto.getContact().getEmail());
         assertEquals("123", personDto.getContact().getPhone());
+    }
+    
+    @Test
+    void mappingUsingConverter() {
+        Converter<LocalDate, String> dateOfBirthConverter = 
+                context -> context.getSource().format(DateTimeFormatter.ISO_DATE);
+        
+        TypeMap<Person, PersonDto> personToDto = new ModelMapper().createTypeMap(Person.class, PersonDto.class);
+        
+        personToDto.addMappings(mapper -> 
+                mapper.using(dateOfBirthConverter).map(Person::getDateOfBirth, PersonDto::setDateOfBirth));
+
+        Person person = Person.builder()
+                .dateOfBirth(LocalDate.of(2010, 10, 10))
+                .build();
+        PersonDto dto = personToDto.map(person);
+        assertEquals("2010-10-10", dto.getDateOfBirth());
     }
 }

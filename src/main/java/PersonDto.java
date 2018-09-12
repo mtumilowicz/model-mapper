@@ -13,4 +13,5 @@ class PersonDto {
     String city;
     String street;
     Contact contact;
+    String dateOfBirth;
 }

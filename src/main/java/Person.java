@@ -4,6 +4,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
+
 /**
  * Created by mtumilowicz on 2018-06-27.
  */
@@ -17,4 +19,5 @@ class Person {
     Address address;
     String email;
     String phone;
+    LocalDate dateOfBirth;
 }
