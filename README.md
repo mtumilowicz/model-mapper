@@ -141,5 +141,19 @@ Assume that we have two classes `Person` and `PersonDto` and relations:
         
         PersonDto personDto = personToDto.map(person);
         ```
+    * mapping fields that need conversion
+        ```
+        Converter<LocalDate, String> dateOfBirthConverter = 
+                context -> context.getSource().format(DateTimeFormatter.ISO_DATE);
+        
+        TypeMap<Person, PersonDto> personToDto = new ModelMapper().createTypeMap(Person.class, PersonDto.class);
+        
+        personToDto.addMappings(mapper -> 
+                mapper.using(dateOfBirthConverter).map(Person::getDateOfBirth, PersonDto::setDateOfBirth));
+
+        Person person = ...
+        
+        PersonDto dto = personToDto.map(person);      
+        ```
 # test cases
 All above features are tested in `PersonToPersonDto`.
